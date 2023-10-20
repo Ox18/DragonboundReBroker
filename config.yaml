@@ -1,0 +1,14 @@
+service:
+  port: 9005
+  name: broker-1
+session:
+  secret: game
+database:
+  user:
+    connection: mongodb://localhost:27017/users
+  account:
+    connection: mongodb://localhost:27017/accounts
+  servers:
+    connection: mongodb://localhost:27017/servers
+game:
+  version: 29
