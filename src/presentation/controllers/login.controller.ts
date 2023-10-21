@@ -1,5 +1,13 @@
+import { AVATARS_EXITEM } from "@/enums/avatars.enum";
 import { CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
+import { GuildMemberRepository } from "@/infraestructure/repository/guild-member.repository";
+import { GuildRepository } from "@/infraestructure/repository/guild.repository";
+import { ItemEquippedRepository } from "@/infraestructure/repository/item-equipped.repository";
+import { ItemInventoryRepository } from "@/infraestructure/repository/item-inventory.repository";
+import { UserEventRepository } from "@/infraestructure/repository/user-event.repository";
+import { UserNameChangesRepository } from "@/infraestructure/repository/user-name-changes.repository";
+import UserRepository from "@/infraestructure/repository/user.repository";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 
@@ -13,35 +21,49 @@ export default controller()
     logger.info(`User: ${user}`);
     logger.info(`AuthToken: ${authToken}`);
 
-    let Player = {
-      user_id: user,        // u
-      location_type: 1,     // session
-      room_number: 0,       // session
-      game_id: 'lnferno',   // u
-      rank: 24,             // u
-      gp: 12312,            // u
-      gold: 12312312,       // u
-      cash: 1231232,        // u
-      gender: "m",          // u
-      unlock: 0,          // unlock-bot
-      head: 170,            // item-equipped
-      body: 308,            // item-equipped
-      eyes: 477,            // item-equipped
-      flag: 118,            // item-equipped
-      background: 418,      // item-equipped
-      foreground: 444,      // item-equipped
-      event1: Date.now(),   // event
-      event2: Date.now(),   // event
-      photo_url: 'https://avatars.githubusercontent.com/u/73305665?v=4', // u
-      guild: 'GM',          // guild
-      guild_job: 1,         // guild
-      name_changes: 1,      // user-name-changes
-      power_user: 0,        // items-inventory
-      tournament: 1,        // not needed
+    const userData = await UserRepository.getById(user);
+
+    const itemEquipped = await ItemEquippedRepository.getByUser(user);
+
+    const guildMember = await GuildMemberRepository.getByUser(user);
+
+    const guild = await GuildRepository.getById(guildMember?.guild);
+
+    const userEvent = await UserEventRepository.getByUser(user);
+
+    const nameChangesCount = await UserNameChangesRepository.getCountByUser(user);
+
+    const hasPowerUser = await ItemInventoryRepository.hasItem(AVATARS_EXITEM.POWER_USER);
+
+    logger.info({ hasPowerUser })
+
+    const Player = {
+      user_id: userData._id,
+      location_type: 1,
+      room_number: 0,
+      game_id: userData.nickname,
+      rank: userData.rank,
+      gp: userData.gp,
+      gold: userData.gold,
+      cash: userData.cash,
+      gender: userData.gender,
+      unlock: 0, // unlock-bot
+      head: itemEquipped.head, // item-equipped
+      body: itemEquipped.body, // item-equipped
+      eyes: itemEquipped.eyes, // item-equipped
+      flag: itemEquipped.flag, // item-equipped
+      background: itemEquipped.background, // item-equipped
+      foreground: itemEquipped.foreground, // item-equipped
+      event1: userEvent?.events.facebook.leftTime, // event
+      event2: userEvent?.events.hourly.leftTime, // event
+      photo_url: userData.photoUrl, // u
+      guild: guild?.name, // guild
+      guild_job: guildMember?.job, // guild
+      name_changes: nameChangesCount, // user-name-changes
+      power_user: hasPowerUser, // items-inventory
+      tournament: null, // not needed
     };
 
-
-    
-    client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)])
+    client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)]);
   })
   .routes([CLIENT_OPCODE.LOGIN]);

@@ -52,6 +52,9 @@ export const frameworkWebsocket = ({
           data,
           opcode,
         });
+      } else {
+        logger.error(`Controller not found for opcode { ${opcode} }`);
+        logger.error(`Data: [${data}]`);
       }
     });
   });

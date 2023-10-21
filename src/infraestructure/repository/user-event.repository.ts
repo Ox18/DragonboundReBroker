@@ -6,7 +6,11 @@ export class UserEventRepository {
     return userEventModel.findOne({ user });
   }
 
-  static async bulk(userEvents: UserEvent[]): Promise<void> {
+  static async bulk(userEvents: any[]): Promise<void> {
     await userEventModel.insertMany(userEvents);
+  }
+
+  static async deleteAll(): Promise<void> {
+    await userEventModel.deleteMany({});
   }
 }

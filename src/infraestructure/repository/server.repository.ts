@@ -9,7 +9,11 @@ export class ServerRepository {
     return servers.map((server) => (server.toJSON()));
   }
 
-  static async bulk(servers: Server[]): Promise<void> {
+  static async bulk(servers: any[]): Promise<void> {
     await serverModel.insertMany(servers);
+  }
+
+  static async deleteAll(): Promise<void> {
+    await serverModel.deleteMany({});
   }
 }

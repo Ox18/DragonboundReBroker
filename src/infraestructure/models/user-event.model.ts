@@ -5,14 +5,19 @@ import { UserEvent } from "@/domain/models/user-event.model";
 
 const configModel = config.database.user;
 
-const schemConfig = new mongoose.Schema({
-  leftTime: Number,
-  config: {
-    cash: Number,
-    gold: Number,
-    timeWait: Number,
+const schemConfig = new mongoose.Schema(
+  {
+    leftTime: Number,
+    config: {
+      cash: Number,
+      gold: Number,
+      timeWait: Number,
+    },
   },
-});
+  {
+    _id: false,
+  }
+);
 
 const schema = new mongoose.Schema({
   user: {

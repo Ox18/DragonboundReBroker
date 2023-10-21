@@ -34,7 +34,7 @@ export class Framework {
 
   start(): void {
     this.server.listen(this.port, () => {
-      logger.info(`Server started at http://localhost:${this.port}`);
+      logger.info(`Server started at ws://localhost:${this.port}`);
     });
   }
 

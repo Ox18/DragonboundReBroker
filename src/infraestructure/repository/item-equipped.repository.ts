@@ -6,7 +6,11 @@ export class ItemEquippedRepository {
     return itemEquippedModel.findOne({ user });
   }
 
-  static async bulk(itemEquipped: ItemEquipped[]): Promise<void> {
+  static async bulk(itemEquipped: any[]): Promise<void> {
     await itemEquippedModel.insertMany(itemEquipped);
+  }
+
+  static async deleteAll(): Promise<void> {
+    await itemEquippedModel.deleteMany({});
   }
 }

@@ -12,7 +12,10 @@ export default class AccountRepository {
     await accountModel.insertMany(accounts);
   }
 
-  static async signIn(data): Promise<Account | null> {
+  static async signIn(data: {
+    username: string;
+    password: string;
+  }): Promise<Account | null> {
     const account = await accountModel.findOne(data);
 
     if (!account) {
