@@ -1,5 +1,5 @@
 import { CHAT_TYPE } from "@/enums/chat-type.enum";
-import { messageAdapter } from "./message-adapter";
+import { messageAdapter } from "./message";
 
 export const GameMasterMessage = (
   message: string,
