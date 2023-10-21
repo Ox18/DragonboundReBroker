@@ -5,5 +5,5 @@ export const GoldMessage = (message: string) =>
   messageAdapter({
     message,
     type: CHAT_TYPE.GOLD,
-    enableHTML: false,
+    disabledHTML: false,
   });

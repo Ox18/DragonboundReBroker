@@ -5,4 +5,5 @@ export const BugleMessage = (message: string) =>
   messageAdapter({
     message,
     type: CHAT_TYPE.GM_BUGLE,
+    disabledHTML: true,
   });

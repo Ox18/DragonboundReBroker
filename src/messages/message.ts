@@ -14,7 +14,7 @@ export class Message {
     public readonly type: CHAT_TYPE = CHAT_TYPE.NORMAL,
     public readonly nickname: string = "",
     public readonly guildname: string = "",
-    private readonly enabledHTMLTags: boolean = true
+    private readonly disabledHTML: boolean = true
   ) {
     this.initialize();
   }
@@ -26,7 +26,7 @@ export class Message {
     this.replaceBadWords();
     this.validateErrors();
 
-    if (this.enabledHTMLTags) {
+    if (this.disabledHTML) {
       this.removeHTMLTags();
     }
   }
@@ -54,7 +54,7 @@ export class Message {
   }
 
   private captureHTMLTags() {
-    if (this.enabledHTMLTags) {
+    if (this.disabledHTML) {
       const htmlTags = this.message.match(/<[^>]*>/g);
       this.errors.htmlTags = htmlTags && htmlTags.length > 0;
     }

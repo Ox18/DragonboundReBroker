@@ -6,7 +6,7 @@ type MessageParams = {
   type: CHAT_TYPE;
   nickname?: string;
   guildname?: string;
-  enableHTML?: boolean;
+  disabledHTML?: boolean;
 };
 
 export const messageAdapter = ({
@@ -14,7 +14,7 @@ export const messageAdapter = ({
   type,
   nickname = "",
   guildname = "",
-  enableHTML = true,
+  disabledHTML = true,
 }: MessageParams) => {
-  return new Message(message, type, nickname, guildname, enableHTML);
+  return new Message(message, type, nickname, guildname, disabledHTML);
 };

@@ -5,5 +5,5 @@ export const SystemMessage = (message: string) =>
   messageAdapter({
     message,
     type: CHAT_TYPE.SYSTEM,
-    enableHTML: false,
+    disabledHTML: false,
   });
