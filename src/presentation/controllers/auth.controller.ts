@@ -1,17 +1,17 @@
+import { INTERNAL_CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
-import accountRepository from "@/infraestructure/repository/account.repository";
-import userRepository from "@/infraestructure/repository/user.repository";
 import { controller } from "@/lib/modules/controller-manager.module";
 
-type CreateUser = {
-  username: string;
-  password: string;
-};
+export default controller()
+  .handle(async ({ client }) => {
+    client.sendOpcode(SERVER_OPCODE.HI, [
+      29, // version
+      2, // count player or idont know
+      3, // server type
+    ]);
 
-export default controller<CreateUser>()
-  .handle(async (req, res) => {
-    
+    client.sendOpcode(SERVER_OPCODE.LOGIN_PROFILE, []);
+
+    client.sendOpcode(SERVER_OPCODE.LOGIN_AVATARS, []);
   })
-  .routes([
-    SERVER_OPCODE.HI
-  ]);
+  .routes([INTERNAL_CLIENT_OPCODE.AUTH]);

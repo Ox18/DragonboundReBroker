@@ -4,13 +4,14 @@ import express, { Express } from "express";
 import { MainController } from "../../controllers/main.controller";
 import { logManager } from "../log-manager.module";
 import { frameworkHealthRoutes } from "./framework-health-routes.module";
+import { frameworkWebsocket } from "./framework-websocket.module";
+import { controllerSearch } from "../controller-search.module";
 
 const logger = logManager("application");
-
 export class Framework {
   app: Express;
   server: http.Server;
-  ws: any;
+  ws: WebSocket.Server;
   controllers: MainController[];
 
   constructor(private readonly port: number) {
@@ -19,34 +20,12 @@ export class Framework {
     this.ws = new WebSocket.Server({ server: this.server });
   }
 
-  initialize(dir: string): void {
-    this.ws.on("connection", (ws: WebSocket) => {
-      logger.info("New client connected");
-
-      // login or hi
-      ws.send(JSON.stringify([9,
-        29, // version
-        2,  // count player or idont know
-        3   // server type
-      ]));
-      // login_profile: 26,
-
-      ws.send(JSON.stringify([26, []]))
-
-      // login_avatars: 27,
-      ws.send(JSON.stringify([27, []]))
-
-      ws.on("message", (message: string) => {
-        logger.info(`Received message => ${message}`);
-
-        ws.send(JSON.stringify([1, [1,123,123,123,123,12,1]]))
-      });
-    })
-
-    // create route
-    this.app.get("/health", (req, res) => {
-      res.json(frameworkHealthRoutes(this.controllers));
+  initialize(): void {
+    frameworkWebsocket({
+      ws: this.ws,
+      controllerSearch: controllerSearch(this.controllers),
     });
+    frameworkHealthRoutes(this.app, this.controllers);
   }
 
   loadControllers(controllers: MainController[]) {
@@ -57,6 +36,17 @@ export class Framework {
     this.server.listen(this.port, () => {
       logger.info(`Server started at http://localhost:${this.port}`);
     });
+  }
 
+  getControllerByOpcode(opcode: number): MainController {
+    const controller = this.controllers.find((controller) =>
+      controller.hasRoute(opcode)
+    );
+
+    if (!controller) {
+      logger.error(`Controller not found for opcode [${opcode}]`);
+    }
+
+    return controller;
   }
 }

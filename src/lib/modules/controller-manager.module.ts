@@ -1,5 +1,5 @@
-import { RestController } from "../controllers/rest.controller";
+import { MainController } from "../controllers/main.controller";
 
-export function controller<T>(): RestController<T> {
-  return new RestController<T>();
+export function controller() {
+  return new MainController();
 }

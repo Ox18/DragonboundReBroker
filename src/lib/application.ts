@@ -8,7 +8,7 @@ export const application = async (dir: string): Promise<void> => {
   const controllers = await loadControllers(dir);
   
   const framework = new Framework(config.service.port);
-  framework.initialize(dir);
   framework.loadControllers(controllers);
+  framework.initialize();
   framework.start();
 };

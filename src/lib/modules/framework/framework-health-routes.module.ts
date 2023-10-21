@@ -1,13 +1,22 @@
 import { MainController } from "@/lib/controllers/main.controller";
-import { controller } from "../controller-manager.module";
+import { Express } from "express";
 
-export const frameworkHealthRoutes = (controllers: MainController[]): any => {
-
-  const data = []
+export const frameworkHealthRoutes = (
+  app: Express,
+  controllers: MainController[]
+): any => {
+  const data = [];
 
   controllers.forEach((controller: MainController) => {
-    data.push(...controller._routes as string[])
-  })
+    data.push(...(controller._routes as string[]));
+  });
 
-  return data.map((route: string) => ({ route }))
-}
+  const routes = data.map((route: string) => ({ route }));
+
+  app.get("/health", (req, res) => {
+    res.json({
+      status: "UP",
+      routes,
+    });
+  });
+};
