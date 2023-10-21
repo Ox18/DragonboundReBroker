@@ -68,8 +68,8 @@ export default controller()
     client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)]);
 
     // Messages to welcome
-    const welcomeMessage = BugleMessage('Welcome to DragonBound 3.3 - <a href="http://www.facebook.com/dragonbound.net" target="_blank">DragonBound Community/News</a>')
-    const announcementMessage = BugleMessage('New Avatars: Phoenix & Frozen Warrior Set & Gold Backgrounds & Gold\n Foregrounds | Name Change Fixed | New Cash Charge "GM" Payment Methods.');
+    const welcomeMessage = BugleMessage('Welcome to DragonBound 3.3 - <a href="http://www.facebook.com/dragonbound.net" target="_blank">DragonBound Community/News</a>').get();
+    const announcementMessage = BugleMessage('New Avatars: Phoenix & Frozen Warrior Set & Gold Backgrounds & Gold\n Foregrounds | Name Change Fixed | New Cash Charge "GM" Payment Methods.').get()
 
     client.sendOpcode(SERVER_OPCODE.CHAT, welcomeMessage)
     client.sendOpcode(SERVER_OPCODE.CHAT, announcementMessage)

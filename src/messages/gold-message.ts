@@ -1,5 +1,9 @@
 import { CHAT_TYPE } from "@/enums/chat-type.enum";
-import { Message } from "./message";
+import { messageAdapter } from "./message-adapter";
 
 export const GoldMessage = (message: string) =>
-  Message(message, CHAT_TYPE.GOLD);
+  messageAdapter({
+    message,
+    type: CHAT_TYPE.GOLD,
+    enableHTML: false,
+  });

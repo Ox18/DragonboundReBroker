@@ -1,4 +1,9 @@
 import { CHAT_TYPE } from "@/enums/chat-type.enum";
-import { Message } from "./message";
+import { messageAdapter } from "./message-adapter";
 
-export const DeadMessage = (message: string) => Message(message, CHAT_TYPE.DEAD);
+export const DeadMessage = (message: string) =>
+  messageAdapter({
+    message,
+    type: CHAT_TYPE.DEAD,
+    enableHTML: false,
+  });

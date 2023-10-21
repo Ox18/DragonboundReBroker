@@ -1,8 +1,14 @@
 import { CHAT_TYPE } from "@/enums/chat-type.enum";
-import { Message } from "./message";
+import { messageAdapter } from "./message-adapter";
 
 export const GameMasterBugleMessage = (
   message: string,
   nickname: string,
   guildname: string = ""
-) => Message(message, CHAT_TYPE.GM_BUGLE, nickname, guildname);
+) =>
+  messageAdapter({
+    message,
+    type: CHAT_TYPE.GM_BUGLE,
+    nickname,
+    guildname,
+  });
