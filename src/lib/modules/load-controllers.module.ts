@@ -2,8 +2,9 @@ import * as path from "path";
 import fs from "fs";
 import { MainController } from "../controllers/main.controller";
 
-export const loadControllers = async (dirRoot: string): Promise<MainController[]> => {
-
+export const loadControllers = async (
+  dirRoot: string
+): Promise<MainController[]> => {
   const folderControllers = path.join(dirRoot, "./presentation/controllers");
 
   const controllers: MainController[] = [];
@@ -16,7 +17,9 @@ export const loadControllers = async (dirRoot: string): Promise<MainController[]
     }
 
     const controller = await import(path.join(folderControllers, file));
-    controllers.push(controller.default);
+    if (controller) {
+      controllers.push(controller.default);
+    }
   }
 
   return controllers;

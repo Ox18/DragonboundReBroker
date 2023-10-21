@@ -8,7 +8,9 @@ export const frameworkHealthRoutes = (
   const data = [];
 
   controllers.forEach((controller: MainController) => {
-    data.push(...(controller._routes as string[]));
+    if (controller?._routes) {
+      data.push(...(controller._routes as string[]));
+    }
   });
 
   const routes = data.map((route: string) => ({ route }));
