@@ -5,4 +5,8 @@ export class GuildMemberRepository {
   static getByUser(user: string): Promise<GuildMember | null> {
     return serverModel.findOne({ user });
   }
+
+  static async bulk(guildMembers: GuildMember[]): Promise<void> {
+    await serverModel.insertMany(guildMembers);
+  }
 }

@@ -1,18 +1,18 @@
 
 
 import { Account } from "@/domain/models/account.model";
-import { AccountImpl } from "../implementation/account.impl";
 import accountModel from "../models/account.model";
 
-
-const accountRepository: AccountImpl = {
-  deleteAll: async (): Promise<void> => {
+export default class AccountRepository {
+  static async deleteAll(): Promise<void> {
     await accountModel.deleteMany({});
-  },
-  bulk: async (accounts: any[]): Promise<void> => {
+  }
+
+  static async bulk(accounts: any[]): Promise<void> {
     await accountModel.insertMany(accounts);
-  },
-  signIn: async (data): Promise<Account | null> => {
+  }
+
+  static async signIn(data): Promise<Account | null> {
     const account = await accountModel.findOne(data);
 
     if (!account) {
@@ -20,8 +20,9 @@ const accountRepository: AccountImpl = {
     }
 
     return account;
-  },
-  getById(id: string): Promise<Account | null> {
+  }
+
+  static getById(id: string): Promise<Account | null> {
     const account = accountModel.findById(id);
 
     if (!account) {
@@ -30,6 +31,4 @@ const accountRepository: AccountImpl = {
 
     return account;
   }
-};
-
-export default accountRepository;
+}

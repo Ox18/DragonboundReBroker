@@ -5,4 +5,8 @@ export class ItemEquippedRepository {
   static getByUser(user: string): Promise<ItemEquipped | null> {
     return itemEquippedModel.findOne({ user });
   }
+
+  static async bulk(itemEquipped: ItemEquipped[]): Promise<void> {
+    await itemEquippedModel.insertMany(itemEquipped);
+  }
 }

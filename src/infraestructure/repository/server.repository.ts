@@ -8,4 +8,8 @@ export class ServerRepository {
 
     return servers.map((server) => (server.toJSON()));
   }
+
+  static async bulk(servers: Server[]): Promise<void> {
+    await serverModel.insertMany(servers);
+  }
 }

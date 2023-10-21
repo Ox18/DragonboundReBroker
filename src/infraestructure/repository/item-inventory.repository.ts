@@ -8,4 +8,8 @@ export class ItemInventoryRepository {
   ): Promise<ItemInventory | null> {
     return itemInventoryModel.findOne({ item, user });
   }
+
+  static async bulk(itemInventory: ItemInventory[]): Promise<void> {
+    await itemInventoryModel.insertMany(itemInventory);
+  }
 }

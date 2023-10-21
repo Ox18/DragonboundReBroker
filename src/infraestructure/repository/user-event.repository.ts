@@ -5,4 +5,8 @@ export class UserEventRepository {
   static getByUser(user: string): Promise<UserEvent | null> {
     return userEventModel.findOne({ user });
   }
+
+  static async bulk(userEvents: UserEvent[]): Promise<void> {
+    await userEventModel.insertMany(userEvents);
+  }
 }
