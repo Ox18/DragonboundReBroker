@@ -1,4 +1,4 @@
-import { Account } from "../../types/model";
+import { Account } from "@/domain/models/account.model";
 
 export interface AccountImpl {
   deleteAll(): Promise<void>;

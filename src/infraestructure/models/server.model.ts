@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-import { config } from "../config";
+import mongoose from "mongoose";
+import { config } from "@/config";
 import { Model } from "./model";
 
 const connection = config.database.servers.connection;

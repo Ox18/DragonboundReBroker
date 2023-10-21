@@ -1,6 +1,9 @@
-import { Account } from "../../types/model";
-import { AccountModel } from "../../models/account.model";
-import { AccountImpl } from "infraestructure/implementation/account.impl";
+
+
+import { Account } from "@/domain/models/account.model";
+import { AccountImpl } from "../implementation/account.impl";
+import { AccountModel } from "../models/account.model";
+
 
 const accountRepository: AccountImpl = {
   deleteAll: async (): Promise<void> => {

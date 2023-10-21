@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-import { config } from "../config";
+import mongoose from "mongoose";
 import { Model } from "./model";
+import { config } from "@/config";
 
 const connection = config.database.account.connection;
 

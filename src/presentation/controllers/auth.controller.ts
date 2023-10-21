@@ -7,11 +7,11 @@ export default controller()
     client.sendOpcode(SERVER_OPCODE.HI, [
       29, // version
       2, // count player or idont know
-      3, // server type
+      0, // server type
     ]);
 
-    client.sendOpcode(SERVER_OPCODE.LOGIN_PROFILE, []);
+    client.sendOpcode(SERVER_OPCODE.LOGIN_PROFILE, [])
 
-    client.sendOpcode(SERVER_OPCODE.LOGIN_AVATARS, []);
+    client.sendOpcode(SERVER_OPCODE.LOGIN_AVATARS, [])
   })
   .routes([INTERNAL_CLIENT_OPCODE.AUTH]);

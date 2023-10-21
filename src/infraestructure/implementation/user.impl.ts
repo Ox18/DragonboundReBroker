@@ -1,4 +1,4 @@
-import { User } from "@/types/model"
+import { User } from "@/domain/models/user.model";
 
 export interface UserRepositoryImpl {
   deleteAll(): Promise<void>;

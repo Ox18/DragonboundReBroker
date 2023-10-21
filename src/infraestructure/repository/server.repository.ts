@@ -1,5 +1,6 @@
-import serverModel from "../../models/server.model";
-import { Server } from "../../types/model";
+
+import { Server } from "ws";
+import serverModel from "../models/server.model";
 
 export class ServerRepository {
   public static async getAll(): Promise<Server[]> {
