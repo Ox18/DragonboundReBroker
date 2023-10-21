@@ -3,7 +3,7 @@ import { Model } from "./model";
 import { User } from "@/domain/models/user.model";
 import { config } from "@/config";
 
-const connection = config.database.user.connection;
+const configModel = config.database.user;
 
 const schema = new mongoose.Schema({
   nickname: String,
@@ -13,12 +13,11 @@ const schema = new mongoose.Schema({
   gp: Number,
   gold: Number,
   cash: Number,
+  photoUrl: String,
 })
 
-const collection = "users";
-
-export const UserModel = Model<User>({
-  connection,
+export default Model<User>({
+  connection: configModel.connection,
   schema,
-  collection,
-})
+  collection: configModel.collection,
+});

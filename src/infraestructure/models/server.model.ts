@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { config } from "@/config";
 import { Model } from "./model";
+import { Server } from "@/domain/models/server.model";
 
-const connection = config.database.servers.connection;
+const configModel = config.database.servers;
 
 const schema = new mongoose.Schema({
   name: String,
@@ -15,12 +16,10 @@ const schema = new mongoose.Schema({
     max: Number,
   },
   identifier: Number,
-})
+});
 
-const collection = "servers";
-
-export default Model({
-  connection,
+export default Model<Server>({
+  connection: configModel.connection,
   schema,
-  collection,
-})
+  collection: configModel.collection,
+});

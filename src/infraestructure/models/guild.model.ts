@@ -1,20 +1,15 @@
 import mongoose from "mongoose";
 import { Model } from "./model";
 import { config } from "@/config";
-import { Account } from "@/domain/models/account.model";
+import { Guild } from "@/domain/models/guild.model";
 
-const configModel = config.database.account;
+const configModel = config.database.guild;
 
 const schema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: String,
+  name: String,
 });
 
-export default Model<Account>({
+export default Model<Guild>({
   connection: configModel.connection,
   schema,
   collection: configModel.collection,

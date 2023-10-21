@@ -2,18 +2,18 @@
 
 import { Account } from "@/domain/models/account.model";
 import { AccountImpl } from "../implementation/account.impl";
-import { AccountModel } from "../models/account.model";
+import accountModel from "../models/account.model";
 
 
 const accountRepository: AccountImpl = {
   deleteAll: async (): Promise<void> => {
-    await AccountModel.deleteMany({});
+    await accountModel.deleteMany({});
   },
   bulk: async (accounts: any[]): Promise<void> => {
-    await AccountModel.insertMany(accounts);
+    await accountModel.insertMany(accounts);
   },
   signIn: async (data): Promise<Account | null> => {
-    const account = await AccountModel.findOne(data);
+    const account = await accountModel.findOne(data);
 
     if (!account) {
       return null;
@@ -22,7 +22,7 @@ const accountRepository: AccountImpl = {
     return account;
   },
   getById(id: string): Promise<Account | null> {
-    const account = AccountModel.findById(id);
+    const account = accountModel.findById(id);
 
     if (!account) {
       return null;

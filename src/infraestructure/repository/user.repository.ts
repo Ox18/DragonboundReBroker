@@ -1,15 +1,15 @@
 
 import { UserRepositoryImpl } from "../implementation/user.impl";
 import { User } from "@/domain/models/user.model";
-import { UserModel } from "../models/user.model";
+import userModel from "../models/user.model";
 
 export const userRepository: UserRepositoryImpl = {
   deleteAll: async (): Promise<void> => {
-    await UserModel.deleteMany({});
+    await userModel.deleteMany({});
   },
 
   bulk: async (users: any[]): Promise<void> => {
-    await UserModel.insertMany(users);
+    await userModel.insertMany(users);
   },
 
   getByAccount: async (account: string | null): Promise<User | null> => {
@@ -17,7 +17,7 @@ export const userRepository: UserRepositoryImpl = {
       return null;
     }
 
-    const user = await UserModel.findOne({ account });
+    const user = await userModel.findOne({ account });
 
     if (!user) {
       return null;
@@ -27,7 +27,7 @@ export const userRepository: UserRepositoryImpl = {
   },
 
   getTotal: async (): Promise<number> => {
-    return await UserModel.countDocuments({});
+    return await userModel.countDocuments({});
   }
 };
 
