@@ -3,7 +3,7 @@ import { logManager } from "../log-manager.module";
 import { INTERNAL_CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { ControllerSearchModule } from "../controller-search.module";
 import { frameworkAdapterHandler } from "./framework-adapter-handler.module";
-import { Client } from "@/lib/types/request-controller.type";
+import { Client, SendMessageToSelf } from "@/lib/types/request-controller.type";
 import { GameServer } from "../game-server.module";
 
 type WebsocketModule = {
@@ -17,7 +17,7 @@ const logger = logManager("websocket");
 export const frameworkWebsocket = ({
   ws,
   controllerSearch,
-  gameserver
+  gameserver,
 }: WebsocketModule) => {
   ws.on("connection", (ws: WebSocket) => {
     logger.info("New client connected");
@@ -35,12 +35,31 @@ export const frameworkWebsocket = ({
       INTERNAL_CLIENT_OPCODE.AUTH
     );
 
+    const sendMessageToSelf: SendMessageToSelf = (opcode, data = []) => {
+      const controllerToSelf = controllerSearch.getByOpcode(opcode);
+
+      if (controllerToSelf) {
+        frameworkAdapterHandler({
+          client,
+          controller: controllerToSelf,
+          data,
+          opcode,
+          gameserver,
+          sendMessageToSelf,
+        });
+      } else {
+        logger.error(`Controller not found for opcode { ${opcode} }`);
+        logger.error(`Data: [${data}]`);
+      }
+    };
+
     if (controllerAuth) {
       frameworkAdapterHandler({
         client,
         controller: controllerAuth,
         opcode: INTERNAL_CLIENT_OPCODE.AUTH,
-        gameserver
+        gameserver,
+        sendMessageToSelf,
       });
     }
 
@@ -55,7 +74,8 @@ export const frameworkWebsocket = ({
           controller,
           data,
           opcode,
-          gameserver
+          gameserver,
+          sendMessageToSelf,
         });
       } else {
         logger.error(`Controller not found for opcode { ${opcode} }`);

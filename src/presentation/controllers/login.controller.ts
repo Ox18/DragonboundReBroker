@@ -1,6 +1,10 @@
+import { DragonClient } from "@/dragon-client";
 import { DragonServer } from "@/dragon-server";
 import { AVATARS_EXITEM } from "@/enums/avatars.enum";
-import { CLIENT_OPCODE } from "@/enums/client-opcode.enum";
+import {
+  CLIENT_OPCODE,
+  INTERNAL_CLIENT_OPCODE,
+} from "@/enums/client-opcode.enum";
 import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
 import { GuildMemberRepository } from "@/infraestructure/repository/guild-member.repository";
 import { GuildRepository } from "@/infraestructure/repository/guild.repository";
@@ -12,80 +16,97 @@ import UserRepository from "@/infraestructure/repository/user.repository";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 import { BugleMessage } from "@/messages/bugle-message";
-import { refreshPlayersChannel } from "@/services/refresh-players-channel.service";
-
 const logger = logManager("login");
 
 export default controller()
-  .handle<DragonServer>(async ({ client, data, gameserver }) => {
-    console.log(gameserver)
+  .handle<DragonServer>(
+    async ({ client, data, gameserver, sendMessageToSelf }) => {
+      const { clientManager } = gameserver;
 
-    const [version, user, authToken] = data;
+      console.log(gameserver);
 
-    logger.info(`Version: ${version}`);
-    logger.info(`User: ${user}`);
-    logger.info(`AuthToken: ${authToken}`);
+      const [version, user, authToken] = data;
 
-    const userData = await UserRepository.getById(user);
+      logger.info(`Version: ${version}`);
+      logger.info(`User: ${user}`);
+      logger.info(`AuthToken: ${authToken}`);
 
-    const itemEquipped = await ItemEquippedRepository.getByUser(user);
+      const userData = await UserRepository.getById(user);
 
-    const guildMember = await GuildMemberRepository.getByUser(user);
+      const itemEquipped = await ItemEquippedRepository.getByUser(user);
 
-    const guild = await GuildRepository.getById(guildMember?.guild);
+      const guildMember = await GuildMemberRepository.getByUser(user);
 
-    const userEvent = await UserEventRepository.getByUser(user);
+      const guild = await GuildRepository.getById(guildMember?.guild);
 
-    const nameChangesCount = await UserNameChangesRepository.getCountByUser(
-      user
-    );
+      const userEvent = await UserEventRepository.getByUser(user);
 
-    const hasPowerUser = await ItemInventoryRepository.hasItem(
-      AVATARS_EXITEM.POWER_USER
-    );
+      const nameChangesCount = await UserNameChangesRepository.getCountByUser(
+        user
+      );
 
-    logger.info({ hasPowerUser });
+      const hasPowerUser = await ItemInventoryRepository.hasItem(
+        AVATARS_EXITEM.POWER_USER
+      );
 
-    const Player = {
-      user_id: userData._id,
-      location_type: 1,
-      room_number: 0,
-      game_id: userData.nickname,
-      rank: userData.rank,
-      gp: userData.gp,
-      gold: userData.gold,
-      cash: userData.cash,
-      gender: userData.gender,
-      unlock: 0, // unlock-bot
-      head: itemEquipped.head, // item-equipped
-      body: itemEquipped.body, // item-equipped
-      eyes: itemEquipped.eyes, // item-equipped
-      flag: itemEquipped.flag, // item-equipped
-      background: itemEquipped.background, // item-equipped
-      foreground: itemEquipped.foreground, // item-equipped
-      event1: userEvent?.events.facebook.leftTime, // event
-      event2: userEvent?.events.hourly.leftTime, // event
-      photo_url: userData.photoUrl, // u
-      guild: guild?.name, // guild
-      guild_job: guildMember?.job, // guild
-      name_changes: nameChangesCount, // user-name-changes
-      power_user: hasPowerUser, // items-inventory
-      tournament: null, // not needed
-    };
+      logger.info({ hasPowerUser });
 
-    client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)]);
+      const Player = {
+        user_id: userData._id,
+        location_type: 1,
+        room_number: 0,
+        game_id: userData.nickname,
+        rank: userData.rank,
+        gp: userData.gp,
+        gold: userData.gold,
+        cash: userData.cash,
+        gender: userData.gender,
+        unlock: 0, // unlock-bot
+        head: itemEquipped.head, // item-equipped
+        body: itemEquipped.body, // item-equipped
+        eyes: itemEquipped.eyes, // item-equipped
+        flag: itemEquipped.flag, // item-equipped
+        background: itemEquipped.background, // item-equipped
+        foreground: itemEquipped.foreground, // item-equipped
+        event1: userEvent?.events.facebook.leftTime, // event
+        event2: userEvent?.events.hourly.leftTime, // event
+        photo_url: userData.photoUrl, // u
+        guild: guild?.name, // guild
+        guild_job: guildMember?.job, // guild
+        name_changes: nameChangesCount, // user-name-changes
+        power_user: hasPowerUser, // items-inventory
+        tournament: null, // not needed
+      };
 
-    // Messages to welcome
-    const welcomeMessage = BugleMessage(
-      'Welcome to DragonBound 3.3 - <a href="http://www.facebook.com/dragonbound.net" target="_blank">DragonBound Community/News</a>'
-    );
-    const announcementMessage = BugleMessage(
-      'New Avatars: Phoenix & Frozen Warrior Set & Gold Backgrounds & Gold\n Foregrounds | Name Change Fixed | New Cash Charge "GM" Payment Methods.'
-    );
+      client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)]);
 
-    client.sendOpcode(SERVER_OPCODE.CHAT, welcomeMessage);
-    client.sendOpcode(SERVER_OPCODE.CHAT, announcementMessage);
+      // Messages to welcome
+      const welcomeMessage = BugleMessage(
+        'Welcome to DragonBound 3.3 - <a href="http://www.facebook.com/dragonbound.net" target="_blank">DragonBound Community/News</a>'
+      );
+      const announcementMessage = BugleMessage(
+        'New Avatars: Phoenix & Frozen Warrior Set & Gold Backgrounds & Gold\n Foregrounds | Name Change Fixed | New Cash Charge "GM" Payment Methods.'
+      );
 
-    await refreshPlayersChannel({ client });
-  })
+      client.sendOpcode(SERVER_OPCODE.CHAT, welcomeMessage);
+      client.sendOpcode(SERVER_OPCODE.CHAT, announcementMessage);
+
+      const dragonClient = new DragonClient(userData._id);
+
+      dragonClient.setClient(client);
+      dragonClient.set({
+        rank: userData.rank,
+        nickname: userData.nickname,
+        guildName: guild?.name,
+      });
+
+      gameserver.clientManager.addClient(dragonClient);
+
+      const clientFound = clientManager.getByUserID(userData._id);
+
+      console.log({ clientFound });
+
+      sendMessageToSelf(INTERNAL_CLIENT_OPCODE.REFRESH_PLAYERS_CHANNEL);
+    }
+  )
   .routes([CLIENT_OPCODE.LOGIN]);

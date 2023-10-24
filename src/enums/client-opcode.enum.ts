@@ -45,5 +45,6 @@ export enum CLIENT_OPCODE {
 }
 
 export enum INTERNAL_CLIENT_OPCODE {
-  AUTH = -1
+  AUTH = -1,
+  REFRESH_PLAYERS_CHANNEL = 501,
 }
