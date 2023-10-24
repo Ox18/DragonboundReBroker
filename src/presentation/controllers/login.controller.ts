@@ -1,3 +1,4 @@
+import { playerInfoAdapter } from "@/adapters/player/player-info.adapter";
 import { DragonClient } from "@/dragon-client";
 import { DragonServer } from "@/dragon-server";
 import { AVATARS_EXITEM } from "@/enums/avatars.enum";
@@ -51,34 +52,17 @@ export default controller()
 
       logger.info({ hasPowerUser });
 
-      const Player = {
-        user_id: userData._id,
-        location_type: 1,
-        room_number: 0,
-        game_id: userData.nickname,
-        rank: userData.rank,
-        gp: userData.gp,
-        gold: userData.gold,
-        cash: userData.cash,
-        gender: userData.gender,
-        unlock: 0, // unlock-bot
-        head: itemEquipped.head, // item-equipped
-        body: itemEquipped.body, // item-equipped
-        eyes: itemEquipped.eyes, // item-equipped
-        flag: itemEquipped.flag, // item-equipped
-        background: itemEquipped.background, // item-equipped
-        foreground: itemEquipped.foreground, // item-equipped
-        event1: userEvent?.events.facebook.leftTime, // event
-        event2: userEvent?.events.hourly.leftTime, // event
-        photo_url: userData.photoUrl, // u
-        guild: guild?.name, // guild
-        guild_job: guildMember?.job, // guild
-        name_changes: nameChangesCount, // user-name-changes
-        power_user: hasPowerUser, // items-inventory
-        tournament: null, // not needed
-      };
+      const payloadPlayerInfo = playerInfoAdapter({
+        userData,
+        itemEquipped,
+        guildMember,
+        guild,
+        userEvent,
+        nameChangesCount,
+        hasPowerUser,
+      });
 
-      client.send([SERVER_OPCODE.MY_PLAYER_INFO, Object.values(Player)]);
+      client.send([SERVER_OPCODE.MY_PLAYER_INFO, payloadPlayerInfo]);
 
       // Messages to welcome
       const welcomeMessage = BugleMessage(
