@@ -2,7 +2,7 @@ import { HandleController, RoutesController } from "../types/controller.type";
 
 export class MainController {
   _routes: RoutesController = [];
-  _handle: HandleController | null = null;
+  _handle: HandleController<any> | null = null;
 
   constructor() {}
 
@@ -11,7 +11,7 @@ export class MainController {
     return this;
   }
 
-  handle(handle: HandleController): MainController {
+  handle<T>(handle: HandleController<T>): MainController {
     this._handle = handle;
     return this;
   }

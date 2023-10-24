@@ -1,3 +1,4 @@
+import { DragonServer } from "@/dragon-server";
 import { AVATARS_EXITEM } from "@/enums/avatars.enum";
 import { CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
@@ -16,7 +17,9 @@ import { refreshPlayersChannel } from "@/services/refresh-players-channel.servic
 const logger = logManager("login");
 
 export default controller()
-  .handle(async ({ client, data }) => {
+  .handle<DragonServer>(async ({ client, data, gameserver }) => {
+    console.log(gameserver)
+
     const [version, user, authToken] = data;
 
     logger.info(`Version: ${version}`);

@@ -4,10 +4,12 @@ import { INTERNAL_CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { ControllerSearchModule } from "../controller-search.module";
 import { frameworkAdapterHandler } from "./framework-adapter-handler.module";
 import { Client } from "@/lib/types/request-controller.type";
+import { GameServer } from "../game-server.module";
 
 type WebsocketModule = {
   ws: WebSocket.Server;
   controllerSearch: ControllerSearchModule;
+  gameserver: GameServer;
 };
 
 const logger = logManager("websocket");
@@ -15,6 +17,7 @@ const logger = logManager("websocket");
 export const frameworkWebsocket = ({
   ws,
   controllerSearch,
+  gameserver
 }: WebsocketModule) => {
   ws.on("connection", (ws: WebSocket) => {
     logger.info("New client connected");
@@ -37,6 +40,7 @@ export const frameworkWebsocket = ({
         client,
         controller: controllerAuth,
         opcode: INTERNAL_CLIENT_OPCODE.AUTH,
+        gameserver
       });
     }
 
@@ -51,6 +55,7 @@ export const frameworkWebsocket = ({
           controller,
           data,
           opcode,
+          gameserver
         });
       } else {
         logger.error(`Controller not found for opcode { ${opcode} }`);

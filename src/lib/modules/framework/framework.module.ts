@@ -6,6 +6,7 @@ import { logManager } from "../log-manager.module";
 import { frameworkHealthRoutes } from "./framework-health-routes.module";
 import { frameworkWebsocket } from "./framework-websocket.module";
 import { controllerSearch } from "../controller-search.module";
+import { GameServer } from "../game-server.module";
 
 const logger = logManager("application");
 export class Framework {
@@ -13,6 +14,7 @@ export class Framework {
   server: http.Server;
   ws: WebSocket.Server;
   controllers: MainController[];
+  gameserver: GameServer;
 
   constructor(private readonly port: number) {
     this.app = express();
@@ -24,6 +26,7 @@ export class Framework {
     frameworkWebsocket({
       ws: this.ws,
       controllerSearch: controllerSearch(this.controllers),
+      gameserver: this.gameserver,
     });
     frameworkHealthRoutes(this.app, this.controllers);
   }
@@ -48,5 +51,9 @@ export class Framework {
     }
 
     return controller;
+  }
+
+  loadGameServer(gameserver: GameServer): void {
+    this.gameserver = gameserver;
   }
 }
