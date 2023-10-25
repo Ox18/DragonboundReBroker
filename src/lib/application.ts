@@ -8,7 +8,9 @@ export const application = async (dir: string, gameserver: GameServer): Promise<
 
   const controllers = await loadControllers(dir);
   
-  const framework = new Framework(config.service.port);
+  const port = process.env.PORT || config.service.port;
+
+  const framework = new Framework(port as number);
   framework.loadGameServer(gameserver);
   framework.loadControllers(controllers);
   framework.initialize();
