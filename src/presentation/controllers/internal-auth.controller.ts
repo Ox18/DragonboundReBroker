@@ -3,7 +3,7 @@ import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 
-const logger = logManager("opcode::auth");
+const logger = logManager("opcode::internal::auth");
 
 export default controller()
   .handle(async ({ client }) => {

@@ -1,16 +1,18 @@
+import { ChatMessage } from "@/chat-message";
 import { filteredWordsList } from "@/consts/filtered-words.const";
+import { DragonServer } from "@/dragon-server";
 import { CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
+import { GameMasterMessage } from "@/messages/gm-message";
 import { NormalMessage } from "@/messages/normal-message";
 import { cleanText, removeHTMLTags } from "@/utils/text.util";
 
 const logger = logManager("opcode::chat");
 
 export default controller()
-  .handle(async ({ client, data }) => {
-
+  .handle<DragonServer>(async ({ client, data, gameserver }) => {
     logger.info(`Client send message`);
 
     const [message, locationType] = data;
@@ -29,11 +31,32 @@ export default controller()
       return;
     }
 
-    const nickName = "lnferno";
-    const guildName = "GM";
+    const myDragonClient = gameserver.clientManager.getByUserID(client.user);
 
-    const normalMessage = NormalMessage(message, nickName, guildName);
+    if (!myDragonClient) return;
 
-    client.sendOpcode(SERVER_OPCODE.CHAT, normalMessage);
+    const payloadMessageClient: [string, string, string] = [
+      message,
+      myDragonClient.nickname,
+      myDragonClient.guildName,
+    ];
+
+    const messageClient = myDragonClient.gm
+      ? GameMasterMessage(...payloadMessageClient)
+      : NormalMessage(...payloadMessageClient);
+
+    gameserver.clientManager.getAll().forEach((dragonClient) => {
+      dragonClient.ws.sendOpcode(SERVER_OPCODE.CHAT, messageClient);
+    });
+
+    const chatMessage = new ChatMessage(
+      client.user,
+      cleanedMessage,
+      messageClient[1],
+      myDragonClient.nickname,
+      myDragonClient.guildName
+    );
+
+    gameserver.chat.addMessage(chatMessage);
   })
   .routes([CLIENT_OPCODE.CHAT]);

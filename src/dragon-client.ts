@@ -6,6 +6,7 @@ export class DragonClient {
   rank: number;
   nickname: string;
   guildName: string;
+  gm: boolean;
 
   constructor(userId: string) {
     this.userId = userId;

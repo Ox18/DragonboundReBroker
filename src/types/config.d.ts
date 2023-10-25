@@ -15,5 +15,6 @@ export interface ConfigData extends ConfigHealth {
   };
   game: {
     version: number;
+    messages: string[]
   }
 }

@@ -12,6 +12,6 @@ export const messageAdapter = ({
   type,
   nickname = "",
   guildname = "",
-}: MessageParams) => {
+}: MessageParams): any[] => {
   return [message, nickname, type, guildname];
 };

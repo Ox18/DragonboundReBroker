@@ -3,7 +3,7 @@ import { INTERNAL_CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 
-const logger = logManager("opcode::disconnect");
+const logger = logManager("opcode::internal::disconnect");
 
 export default controller()
   .handle<DragonServer>(async ({ client, gameserver, sendMessageToSelf }) => {
