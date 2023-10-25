@@ -3,7 +3,7 @@ import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 import { refreshPlayersGuildies } from "@/services/refresh-players-guildies.service";
 
-const logger = logManager("refresh-guildies");
+const logger = logManager("opcode::refresh-guildies");
 
 export default controller()
   .handle(async ({ client }) => {

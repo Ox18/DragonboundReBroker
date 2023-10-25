@@ -8,8 +8,10 @@ export type RequestController<T = GameServer> = {
 }
 
 export type Client = {
+    user: string;
     send: (data: any) => void;
     sendOpcode: (opcode: number, data: any) => void;
+    setUser: (user: string) => void;
 }
 
 export type SendMessageToSelf = (opcode: number, data?: any) => void;

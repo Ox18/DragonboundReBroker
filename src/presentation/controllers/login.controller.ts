@@ -17,14 +17,13 @@ import UserRepository from "@/infraestructure/repository/user.repository";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 import { BugleMessage } from "@/messages/bugle-message";
-const logger = logManager("login");
+
+const logger = logManager("opcode::login");
 
 export default controller()
   .handle<DragonServer>(
     async ({ client, data, gameserver, sendMessageToSelf }) => {
       const { clientManager } = gameserver;
-
-      console.log(gameserver);
 
       const [version, user, authToken] = data;
 
@@ -63,6 +62,7 @@ export default controller()
       });
 
       client.send([SERVER_OPCODE.MY_PLAYER_INFO, payloadPlayerInfo]);
+      client.setUser(userData._id);
 
       // Messages to welcome
       const welcomeMessage = BugleMessage(
@@ -84,7 +84,7 @@ export default controller()
         guildName: guild?.name,
       });
 
-      gameserver.clientManager.addClient(dragonClient);
+      gameserver.clientManager.subscribe(dragonClient);
 
       const clientFound = clientManager.getByUserID(userData._id);
 

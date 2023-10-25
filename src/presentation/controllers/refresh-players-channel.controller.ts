@@ -5,7 +5,7 @@ import { SERVER_OPCODE } from "@/enums/server-opcode.enum";
 import { controller } from "@/lib/modules/controller-manager.module";
 import { logManager } from "@/lib/modules/log-manager.module";
 
-const logger = logManager("refresh-players-channel");
+const logger = logManager("opcode::refresh-players-channel");
 
 export default controller()
   .handle<DragonServer>(async ({ client, data, gameserver }) => {

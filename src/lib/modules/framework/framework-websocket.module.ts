@@ -1,16 +1,8 @@
 import WebSocket from "ws";
 import { logManager } from "../log-manager.module";
-import { INTERNAL_CLIENT_OPCODE } from "@/enums/client-opcode.enum";
 import { ControllerSearchModule } from "../controller-search.module";
 import { frameworkAdapterHandler } from "./framework-adapter-handler.module";
-import { Client, SendMessageToSelf } from "@/lib/types/request-controller.type";
 import { GameServer } from "../game-server.module";
-
-type WebsocketModule = {
-  ws: WebSocket.Server;
-  controllerSearch: ControllerSearchModule;
-  gameserver: GameServer;
-};
 
 const logger = logManager("websocket");
 
@@ -18,24 +10,28 @@ export const frameworkWebsocket = ({
   ws,
   controllerSearch,
   gameserver,
-}: WebsocketModule) => {
-  ws.on("connection", (ws: WebSocket) => {
+}: {
+  ws: WebSocket.Server;
+  controllerSearch: ControllerSearchModule;
+  gameserver: GameServer;
+}) => {
+  ws.on("connection", (ws) => {
     logger.info("New client connected");
 
-    const client: Client = {
-      send: (data) => {
+    let client = {
+      user: "",
+      send: (data: string) => {
         ws.send(JSON.stringify(data));
       },
       sendOpcode: (opcode, data) => {
         ws.send(JSON.stringify([opcode, ...data]));
       },
+      setUser: (user: string) => {
+        client.user = user;
+      },
     };
 
-    const controllerAuth = controllerSearch.getByOpcode(
-      INTERNAL_CLIENT_OPCODE.AUTH
-    );
-
-    const sendMessageToSelf: SendMessageToSelf = (opcode, data = []) => {
+    const sendMessageToSelf = (opcode, data = []) => {
       const controllerToSelf = controllerSearch.getByOpcode(opcode);
 
       if (controllerToSelf) {
@@ -53,15 +49,15 @@ export const frameworkWebsocket = ({
       }
     };
 
-    if (controllerAuth) {
-      frameworkAdapterHandler({
-        client,
-        controller: controllerAuth,
-        opcode: INTERNAL_CLIENT_OPCODE.AUTH,
-        gameserver,
-        sendMessageToSelf,
-      });
-    }
+    const payload = {
+      client,
+      controller: null,
+      opcode: null,
+      gameserver,
+      sendMessageToSelf,
+    };
+
+    gameserver.onConnect(payload);
 
     ws.on("message", (message: string) => {
       const [opcode, ...data] = JSON.parse(message);
@@ -72,8 +68,8 @@ export const frameworkWebsocket = ({
         frameworkAdapterHandler({
           client,
           controller,
-          data,
           opcode,
+          data,
           gameserver,
           sendMessageToSelf,
         });
@@ -81,6 +77,11 @@ export const frameworkWebsocket = ({
         logger.error(`Controller not found for opcode { ${opcode} }`);
         logger.error(`Data: [${data}]`);
       }
+    });
+
+    ws.on("close", () => {
+      logger.info("Client disconnected");
+      gameserver.onDisconnect(payload);
     });
   });
 };

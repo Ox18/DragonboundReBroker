@@ -13,7 +13,6 @@ export class DragonClient {
 
   set(payload: any) {
     Object.assign(this, payload);
-    console.log(this)
   }
 
   setClient(client: Client) {

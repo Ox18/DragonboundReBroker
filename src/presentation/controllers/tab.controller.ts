@@ -8,7 +8,7 @@ import { logManager } from "@/lib/modules/log-manager.module";
 import { refreshPlayersFriends } from "@/services/refresh-players-friends.service";
 import { refreshPlayersGuildies } from "@/services/refresh-players-guildies.service";
 
-const logger = logManager("tab");
+const logger = logManager("opcode::tab");
 
 export default controller()
   .handle(async ({ client, data, sendMessageToSelf }) => {

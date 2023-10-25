@@ -3,7 +3,7 @@ import { Client, SendMessageToSelf } from "@/lib/types/request-controller.type";
 import { logManager } from "../log-manager.module";
 import { GameServer } from "../game-server.module";
 
-type HandlerModule = {
+export type HandlerWebsocketModule = {
   client: Client;
   controller: MainController;
   data?: any;
@@ -21,7 +21,7 @@ export const frameworkAdapterHandler = async ({
   opcode,
   gameserver,
   sendMessageToSelf,
-}: HandlerModule) => {
+}: HandlerWebsocketModule) => {
   const payload = {
     data,
     client,

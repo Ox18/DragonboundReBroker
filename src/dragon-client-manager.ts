@@ -5,7 +5,7 @@ export class ClientManager {
 
   constructor() {}
 
-  addClient(client: DragonClient) {
+  subscribe(client: DragonClient) {
     this.clients.push(client);
   }
 
@@ -19,5 +19,9 @@ export class ClientManager {
 
   getAll(): DragonClient[] {
     return this.clients;
+  }
+
+  unsubscribe(userID: string) {
+    this.clients = this.clients.filter((client) => client.userId !== userID);
   }
 }
