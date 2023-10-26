@@ -18,8 +18,8 @@ export class Framework {
 
   constructor(private readonly port: number) {
     this.app = express();
-    this.server = http.createServer(this.app);
-    this.ws = new WebSocket.Server({ server: this.server });
+    // this.server = http.createServer(this.app);
+    this.ws = new WebSocket.Server({ port });
   }
 
   initialize(): void {
@@ -36,9 +36,9 @@ export class Framework {
   }
 
   start(): void {
-    this.server.listen(this.port, () => {
-      logger.info(`Server started at ws://localhost:${this.port}`);
-    });
+    // this.server.listen(this.port, () => {
+    //   logger.info(`Server started at ws://localhost:${this.port}`);
+    // });
   }
 
   getControllerByOpcode(opcode: number): MainController {
