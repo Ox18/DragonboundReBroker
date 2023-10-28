@@ -7,6 +7,7 @@ import { frameworkHealthRoutes } from "./framework-health-routes.module";
 import { frameworkWebsocket } from "./framework-websocket.module";
 import { controllerSearch } from "../controller-search.module";
 import { GameServer } from "../game-server.module";
+import { frameworkNoSleep } from "./framework-no-sleep.module";
 
 const logger = logManager("application");
 export class Framework {
@@ -39,6 +40,7 @@ export class Framework {
     // this.server.listen(this.port, () => {
     //   logger.info(`Server started at ws://localhost:${this.port}`);
     // });
+    frameworkNoSleep();
   }
 
   getControllerByOpcode(opcode: number): MainController {
